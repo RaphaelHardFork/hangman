@@ -7,3 +7,7 @@ Puis c'est partie !
 - Faire le tri des scores pour garder que le TOP 5
 - Message indiquant que la lettre en question à déjà été essayée
 - Message si l'utilisateur met un chiffre au lieu d'une lettre
+
+
+  ---------------------------
+`gameV1.js` correspond à l'ancienne version (où l'on devine seulement la première lettre)

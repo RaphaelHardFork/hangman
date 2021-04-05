@@ -3,9 +3,11 @@ const chalk = require('chalk')
 const readline = require('readline-sync')
 const fs = require('fs')
 
-// Importation des fonctions
+// Importation des fonctions, variables et class
 const { wordSelection } = require('./wordSelection')
 const { game } = require('./gameV2')
+const record = require('./record')
+const { UserData } = require('./infoClass')
 
 
 // Acceuil du jeu
@@ -20,9 +22,24 @@ console.log(`
 
 `)
 
-// Score précédent
-let displayScore = fs.readFileSync('./score.json', 'utf-8')
-console.log(displayScore)
+// Chargement du score précédent
+let scoreSheet = `Il n'y a pas de record précédent.`
+let recordOn = false
+if (fs.existsSync('./score.json')) {
+  scoreSheet = fs.readFileSync('./score.json', 'utf-8')
+  scoreSheet = JSON.parse(scoreSheet)
+  recordOn = true
+}
+
+// Affichage du score précédent
+let viewScore = readline.keyInYN(chalk.bold('Voulez-vous voir les scores précédents ?'))
+if (viewScore) {
+  if (recordOn) {
+    record.displayScore(scoreSheet.topFive)
+  } else {
+    console.log(scoreSheet)
+  }
+}
 
 
 // Initiation de la partie
@@ -32,20 +49,77 @@ if (!isStarted) {
   process.exit(0)
 }
 
+// Enregistrement de l'utilisateur
+console.log('Appuie sur entrée pour passer cette étape')
 let username = readline.question('\nInscrit ton nom : ')
 
+
 // Sélection de la difficulté (et du mot)
-let magicWord = wordSelection()
+let parameters = wordSelection()
+let difficulty = ''
+switch (parameters[1]) {
+  case 1:
+    difficulty = 'Facile'
+    break
+  case 1.2:
+    difficulty = 'Moyen'
+    break
+  case 1.5:
+    difficulty = 'Difficile'
+    break
+  default:
+    difficulty = 'Non identifiée'
+    break
+}
+
 
 
 // Le jeu 
-let score = game(magicWord)
+let score = game(parameters[0])
+score = score * parameters[1]
+console.log((chalk.bold.rgb(0, 200, 0)(`Ton score : ${score}/150`)))
 
 
 // Enregistrement du score dans un fichier
-let output = `{
-  "username": "${username}",
-  "score": "${score}"
-}\n`
+if (!username) {
+  if (readline.keyInYN(console.log('Voulez-vous enregistrer votre score ?'))) {
+    while (!username) {
+      username = readline.question('Inscrivez votre nom : ')
+    }
+  }
+}
 
-fs.appendFileSync('score.json', output)
+// Génération des données sur la partie
+let output = new UserData(username, score, difficulty)
+console.log(output)
+
+
+// Fichier de sauvegarde
+if (!recordOn) {
+  scoreSheet = {
+    topFive: []
+  }
+  scoreSheet = JSON.stringify(scoreSheet)
+  fs.writeFileSync('./score.json', scoreSheet)
+  scoreSheet = fs.readFileSync('./score.json', 'utf-8')
+  scoreSheet = JSON.parse(scoreSheet)
+}
+
+// Ajout et mise à jour de la feuille de score
+
+let topFive = scoreSheet.topFive
+console.log(`Avant NEW: ${topFive}`)
+topFive = record.newScore(topFive, output)
+console.log(`après NEW: ${topFive}`)
+
+topFive = record.updateScore(topFive)
+console.log(`après sort: ${topFive}`)
+
+
+
+// Conversion variable vers JSON
+let savedScoreSheet = JSON.stringify(scoreSheet)
+console.log(`saved : ${savedScoreSheet}`)
+
+// Ecriture du fichier
+fs.writeFileSync('./score.json', savedScoreSheet)

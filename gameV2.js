@@ -83,7 +83,7 @@ const game = (magicWord) => {
   }
   let score = ((8 - drawCounter) * 1.25) * 10
   console.log(chalk.bold(`\nLe mot : ${displayLetters.join('')}\n`))
-  console.log(chalk.bold.rgb(0, 200, 0)(`Bravo tu as deviné le mot "${magicWord.join('')}" !\nTon score : ${score}/100`))
+  console.log(chalk.bold.rgb(0, 200, 0)(`Bravo tu as deviné le mot "${magicWord.join('')}" !`))
   return score
 }
 

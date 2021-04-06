@@ -41,6 +41,15 @@ if (viewScore) {
   }
 }
 
+// Suppression des scores
+if (recordOn) {
+  let supScore = readline.question(chalk.bold('Pour effacer les scores écrivez : "delete"\n(Passer cette étape en appuyant sur Enter) '))
+  if (supScore === 'delete') {
+    fs.unlinkSync('./score.json')
+    recordOn = false
+  }
+}
+
 
 // Initiation de la partie
 let isStarted = readline.keyInYN(chalk.bold('On commence la partie ?'))
@@ -48,6 +57,7 @@ if (!isStarted) {
   console.log(chalk.bold('\nA la prochaine !\n'))
   process.exit(0)
 }
+
 
 // Enregistrement de l'utilisateur
 console.log('Appuie sur entrée pour passer cette étape')
@@ -71,7 +81,6 @@ switch (parameters[1]) {
     difficulty = 'Non identifiée'
     break
 }
-
 
 
 // Le jeu 
@@ -106,20 +115,14 @@ if (!recordOn) {
 }
 
 // Ajout et mise à jour de la feuille de score
-
 let topFive = scoreSheet.topFive
-console.log(`Avant NEW: ${topFive}`)
 topFive = record.newScore(topFive, output)
-console.log(`après NEW: ${topFive}`)
-
 topFive = record.updateScore(topFive)
-console.log(`après sort: ${topFive}`)
-
 
 
 // Conversion variable vers JSON
 let savedScoreSheet = JSON.stringify(scoreSheet)
-console.log(`saved : ${savedScoreSheet}`)
+
 
 // Ecriture du fichier
 fs.writeFileSync('./score.json', savedScoreSheet)

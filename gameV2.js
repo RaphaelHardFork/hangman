@@ -10,7 +10,7 @@ const { hangmanDraw } = require('./draw')
 const game = (magicWord) => {
   // Variables à initier
   let drawCounter = 0
-  let goodLetter = []
+  let triedLetter = []
   let placeholder = '_ '
   magicWord = magicWord.split('')
   let displayLetters = []
@@ -45,6 +45,12 @@ const game = (magicWord) => {
       console.log(chalk.bold('\nA la prochaine !\n'))
       process.exit(1)
     }
+    // Lettre déjà essayée
+    if (triedLetter.includes(letter)) {
+      console.log(chalk.bold(`Tu as déjà essayé le "${letter}"`))
+      continue
+    }
+
     // Réponse correcte ?
     let isFind = false
     for (let i = 0; i < magicWord.length; i++) {
@@ -55,11 +61,16 @@ const game = (magicWord) => {
     }
     if (isFind) {
       console.log(chalk.bold.rgb(0, 200, 0)(`Bien joué tu as trouver une lettre !`))
+      triedLetter.push(letter)
     } else if (letter.length !== 1) {
       console.log(chalk.red(`On t'as dit une lettre, "${letter}" ça fait ${letter.length} lettres !\nTampis le pendu avance ! `))
       drawCounter++
+    } else if (!isNaN(letter)) {
+      console.log(chalk.red(`On t'as dit une lettre, "${letter}" c'est un chiffre !\nTampis le pendu avance ! `))
+      drawCounter++
     } else {
       console.log(chalk.red(`Non ce n'est pas un ${letter.toUpperCase()}...\nLe pendu avance...`))
+      triedLetter.push(letter)
       drawCounter++
     }
 

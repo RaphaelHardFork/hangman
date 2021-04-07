@@ -13,7 +13,7 @@ const displayScore = (topFive) => {
 TOP 5 :`)
 
   for (let elem of topFive) {
-    console.log(chalk.bold(` - ${elem.username} : ${elem.score} (${elem.difficulty})`))
+    console.log(chalk.bold(` - ${elem.username} : ${elem.score} (${elem.difficulty} en ${elem.lang})`))
   }
   console.log('\n\n')
 }
@@ -29,13 +29,14 @@ const updateScore = (topFive) => {
     }
     return 0
   })
+  return topFive
 }
 
 // Ajout d'un nouveau record
 const newScore = (topFive, output) => {
   let newTopFive = []
   // inférieur à 5
-  if (topFive.length <= 5) {
+  if (topFive.length < 5) {
     topFive.push(output)
     return topFive
     // supérieur à 5

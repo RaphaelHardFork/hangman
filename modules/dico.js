@@ -997,15 +997,24 @@ nez	nose
 pluriel	plural
 colère	anger
 revendication	claim`.split('\n').join('\t').split('\t')
-let dictionary = []
+// Dictionnaire français
+let frenchDictionary = []
 for (i = 0; i < dico.length; i++) {
   if (i % 2 === 0) {
-    dictionary.push(dico[i])
+    frenchDictionary.push(dico[i])
+  }
+}
+
+// Dictionnaire anglais
+let englishDictionary = []
+for (i = 0; i < dico.length; i++) {
+  if (i % 2 !== 0) {
+    englishDictionary.push(dico[i])
   }
 }
 
 // Selectionner les mots d'une certaine longueur
-const ajustDictionary = (small, big) => {
+const ajustDictionary = (small, big, dictionary) => {
   let newDic = []
   for (let elem of dictionary) {
     if (elem.length <= Number(big) && elem.length >= Number(small)) {
@@ -1017,4 +1026,5 @@ const ajustDictionary = (small, big) => {
 
 // Exportation des variables & fonctions
 exports.ajustDictionary = ajustDictionary
-exports.dictionary = dictionary
+exports.frenchDictionary = frenchDictionary
+exports.englishDictionary = englishDictionary

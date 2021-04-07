@@ -4,10 +4,10 @@ const readline = require('readline-sync')
 const fs = require('fs')
 
 // Importation des fonctions, variables et class
-const { wordSelection } = require('./wordSelection')
-const { game } = require('./gameV2')
-const record = require('./record')
-const { UserData } = require('./infoClass')
+const { wordSelection } = require('./modules/wordSelection')
+const { game } = require('./modules/gameV2')
+const record = require('./modules/record')
+const { UserData } = require('./modules/infoClass')
 
 
 // Acceuil du jeu
@@ -64,7 +64,7 @@ console.log('Appuie sur entrée pour passer cette étape')
 let username = readline.question('\nInscrit ton nom : ')
 
 
-// Sélection de la difficulté (et du mot)
+// Sélection de la difficulté, de la langue et du mot
 let parameters = wordSelection()
 let difficulty = ''
 switch (parameters[1]) {
@@ -81,6 +81,12 @@ switch (parameters[1]) {
     difficulty = 'Non identifiée'
     break
 }
+let lang = parameters[2]
+
+//Debug Mode
+if (process.argv[2] === 'debug') {
+  console.log(parameters)
+}
 
 
 // Le jeu 
@@ -95,12 +101,14 @@ if (!username) {
     while (!username) {
       username = readline.question('Inscrivez votre nom : ')
     }
+  } else {
+    console.log(chalk.bold('\nA la prochaine !\n'))
+    process.exit(1)
   }
 }
 
 // Génération des données sur la partie
-let output = new UserData(username, score, difficulty)
-console.log(output)
+let output = new UserData(username, score, difficulty, lang)
 
 
 // Fichier de sauvegarde
@@ -118,6 +126,7 @@ if (!recordOn) {
 let topFive = scoreSheet.topFive
 topFive = record.newScore(topFive, output)
 topFive = record.updateScore(topFive)
+scoreSheet.topFive = topFive
 
 
 // Conversion variable vers JSON

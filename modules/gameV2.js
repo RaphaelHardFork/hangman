@@ -35,9 +35,9 @@ const game = (magicWord) => {
     }
 
     // Choix de la lettre
-    console.log('\nTape "out" pour abandonner.')
+    console.log('\nTape "out" pour abandonner. Tape "!" pour faire un espace.')
     let letter = readline.question(chalk.bold('Devine la lettre ? '))
-
+    if (letter === '!') { letter = ' ' }
     // Verification de la lettre
     letter = letter.toLowerCase()
     // Choix d'abandonner

@@ -5,4 +5,5 @@ Puis c'est partie !
 Vous pouvez utiliser `node main.js debug` pour connaitre le mot secret.
 
   ---------------------------
-`gameV1.js` correspond à l'ancienne version (où l'on devine seulement la première lettre)
+`gameV1.js` correspond à l'ancienne version (où l'on devine seulement la première lettre)  
+Tapez `node main.js gameV1` pour le tester (utilisable en mode `debug`)

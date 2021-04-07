@@ -6,6 +6,7 @@ const fs = require('fs')
 // Importation des fonctions, variables et class
 const { wordSelection } = require('./modules/wordSelection')
 const { game } = require('./modules/gameV2')
+const { gameV1 } = require('./modules/gameV1')
 const record = require('./modules/record')
 const { UserData } = require('./modules/infoClass')
 
@@ -90,7 +91,12 @@ if (process.argv[2] === 'debug') {
 
 
 // Le jeu 
-let score = game(parameters[0])
+let score
+if (process.argv.includes('gameV1')) {
+  score = gameV1(parameters[0])
+} else {
+  score = game(parameters[0])
+}
 score = score * parameters[1]
 console.log((chalk.bold.rgb(0, 200, 0)(`Ton score : ${score}/150`)))
 

@@ -5,13 +5,11 @@ const chalk = require('chalk')
 const displayScore = (topFive) => {
   // topFive est un tableau d'objet
   console.log(`
-
 +------------------+
 |       SCORE      |
 +------------------+
 
 TOP 5 :`)
-
   for (let elem of topFive) {
     console.log(chalk.bold(` - ${elem.username} : ${elem.score} (${elem.difficulty} en ${elem.lang})`))
   }

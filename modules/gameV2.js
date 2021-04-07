@@ -1,6 +1,7 @@
 // Importation des packages
 const chalk = require('chalk')
 const readline = require('readline-sync')
+const { randomInt } = require('crypto')
 
 // Importation des variables et fonctions
 const { hangmanDraw } = require('./draw')
@@ -38,6 +39,12 @@ const game = (magicWord) => {
     // Choix de la lettre
     console.log('\nTape "out" pour abandonner. \nTape "!" pour faire un espace.\nTape "*" pour avoir un indice.')
     let letter = readline.question(chalk.bold('Devine la lettre ? '))
+    // Design
+    console.log('-------------------------------------------------\n')
+    if (letter.length === 0) {
+      console.log(chalk.bold.hsl(randomInt(360), 50, 50)('OUPS ! Tu n\'as rien mis'))
+      continue
+    }
     // Choix d'un indice
     if (letter === '*') {
       if (!haveAClue) {
@@ -86,6 +93,11 @@ const game = (magicWord) => {
       triedLetter.push(letter)
       drawCounter++
     }
+    // Design essaie supplémentaire
+    console.log(chalk.bold(`
+----------------------------------------------------
+    Erreur n°${drawCounter}/${hangmanDraw.length - 1} Lettres essayées : ${triedLetter}               
+----------------------------------------------------`))
 
     // Game Over
     if (drawCounter === hangmanDraw.length) {

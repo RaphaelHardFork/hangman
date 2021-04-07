@@ -13,7 +13,7 @@ const wordSelection = () => {
   let dictionary = []
   let difficulty = 0
   let lang = 0
-  console.log('Quelle difficulté voulez-vous ?')
+  console.log('Choisissez dans quelle langue sera le mot ?')
   while (!isSelected) {
     // Choisir la langue du dictionnaire
     const LANG = ['Français', 'Anglais']
@@ -39,6 +39,7 @@ const wordSelection = () => {
         }
     }
     // Le mot est choisit en fonction de la difficulté voulu
+    console.log('Quelle niveau de difficulté voulez-vous ?')
     const HARDNESS = ['facile', 'moyen', 'difficile']
     let hardnessChoice = readline.keyInSelect(HARDNESS)
     switch (hardnessChoice) {

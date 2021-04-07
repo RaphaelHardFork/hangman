@@ -4,6 +4,7 @@ const readline = require('readline-sync')
 
 // Importation des variables et fonctions
 const { hangmanDraw } = require('./draw')
+const { indice } = require('./indice')
 
 
 // Fonction pour ajouter les lettres
@@ -19,12 +20,12 @@ const game = (magicWord) => {
   }
 
   // Démarrage de la boucle
+  let haveAClue = false
   let isOver = false
   while (!isOver) {
     // Affichage du pendu
     console.log(chalk.bold.hsl(0, drawCounter * 10, 50)(hangmanDraw[drawCounter]))
     console.log(chalk.bold.hsl(0, drawCounter * 10, 50)('Ne le laisse pas se faire pendre !\n'))
-
 
     // Affichage des bonnes lettres
     console.log(`Le mot : ${displayLetters.join('')}`)
@@ -35,13 +36,25 @@ const game = (magicWord) => {
     }
 
     // Choix de la lettre
-    console.log('\nTape "out" pour abandonner. Tape "!" pour faire un espace.')
+    console.log('\nTape "out" pour abandonner. \nTape "!" pour faire un espace.\nTape "*" pour avoir un indice.')
     let letter = readline.question(chalk.bold('Devine la lettre ? '))
+    // Choix d'un indice
+    if (letter === '*') {
+      if (!haveAClue) {
+        indice(magicWord, displayLetters)
+        haveAClue = true
+      } else {
+        console.log(chalk.bold('\nTu as déjà eu un indice petit malin !\n'))
+      }
+      continue
+    }
+    // Choix d'un espace
     if (letter === '!') { letter = ' ' }
     // Verification de la lettre
     letter = letter.toLowerCase()
     // Choix d'abandonner
     if (letter === 'out') {
+      console.log(chalk.bold(`\nLe mot était "${magicWord.join('')}"`))
       console.log(chalk.bold('\nA la prochaine !\n'))
       process.exit(1)
     }

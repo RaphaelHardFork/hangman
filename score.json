@@ -1,1 +1,67 @@
-{"topFive":[{"username":"raph","score":150,"difficulty":"Difficile","lang":"Anglais"}]}
+{
+  "topTwenty": [
+    {
+      "username": "PLATON",
+      "lang": "Français",
+      "difficulty": 11,
+      "score": 15.75,
+      "masterWord": "PROPAGATION"
+    },
+    {
+      "username": "IDRISS",
+      "lang": "Français",
+      "difficulty": 11,
+      "score": 14,
+      "masterWord": "PROPAGATION"
+    },
+    {
+      "username": "HART ",
+      "lang": "Français",
+      "difficulty": 12,
+      "score": 14,
+      "masterWord": "SÉLECTIONNER"
+    },
+    {
+      "username": "SOCRATE",
+      "lang": "Français",
+      "difficulty": 10,
+      "score": 12.25,
+      "masterWord": "RÉPÉTITION"
+    },
+    {
+      "username": "RODOLPHE",
+      "lang": "Français",
+      "difficulty": 8,
+      "score": 12,
+      "masterWord": "POURRAIT"
+    },
+    {
+      "username": "ROBERT",
+      "lang": "Anglais",
+      "difficulty": 10,
+      "score": 10.5,
+      "masterWord": "DICTIONARY"
+    },
+    {
+      "username": "MALTUS",
+      "lang": "Français",
+      "difficulty": 8,
+      "score": 9,
+      "masterWord": "ENSEMBLE"
+    },
+    {
+      "username": "ROGER",
+      "lang": "Anglais",
+      "difficulty": 8,
+      "score": 8.75,
+      "masterWord": "QUESTION"
+    },
+    {
+      "username": "TALEB",
+      "lang": "Français",
+      "difficulty": 9,
+      "score": 8.75,
+      "masterWord": "SEULEMENT"
+    }
+  ]
+}

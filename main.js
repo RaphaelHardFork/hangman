@@ -3,17 +3,13 @@ const chalk = require('chalk')
 const readline = require('readline-sync')
 const fs = require('fs')
 
-// Importation des fonctions, variables et class
-const { wordSelection } = require('./modules/wordSelection')
-const { game } = require('./modules/gameV2')
-const { gameV1 } = require('./modules/gameV1')
-const record = require('./modules/record')
-const { UserData } = require('./modules/infoClass')
+// Importation des fonctions, class, et variables
+const { displayScore, updateScore } = require('./game_modules/record')
+const { HangMan } = require('./game_modules/classHangman')
 
 
 // Acceuil du jeu
-console.log(`
-
+console.log(chalk.bold(`
 
 +---------------------------------------------+
 |                                             |
@@ -21,123 +17,140 @@ console.log(`
 |                                             |
 +---------------------------------------------+
 
-`)
+`))
 
-// Chargement du score précédent
+// Chargement des scores (automatique)
 let scoreSheet = `Il n'y a pas de record précédent.`
-let recordOn = false
 if (fs.existsSync('./score.json')) {
-  scoreSheet = fs.readFileSync('./score.json', 'utf-8')
-  scoreSheet = JSON.parse(scoreSheet)
-  recordOn = true
-}
-
-// Affichage du score précédent
-let viewScore = readline.keyInYN(chalk.bold('Voulez-vous voir les scores précédents ?'))
-if (viewScore) {
-  if (recordOn) {
-    record.displayScore(scoreSheet.topFive)
-  } else {
-    console.log(scoreSheet)
+  let stats = fs.statSync('./score.json')
+  if (stats.isFile) {
+    scoreSheet = fs.readFileSync('./score.json', 'utf-8')
+    scoreSheet = JSON.parse(scoreSheet)
   }
-}
-
-// Suppression des scores
-if (recordOn) {
-  let supScore = readline.question(chalk.bold('Pour effacer les scores écrivez : "delete"\n(Passer cette étape en appuyant sur Enter) '))
-  if (supScore === 'delete') {
-    fs.unlinkSync('./score.json')
-    recordOn = false
-  }
-}
-
-
-// Initiation de la partie
-let isStarted = readline.keyInYN(chalk.bold('On commence la partie ?'))
-if (!isStarted) {
-  console.log(chalk.bold('\nA la prochaine !\n'))
-  process.exit(0)
-}
-
-
-// Enregistrement de l'utilisateur
-console.log('Appuie sur entrée pour passer cette étape')
-let username = readline.question('\nInscrit ton nom : ')
-
-
-// Sélection de la difficulté, de la langue et du mot
-let parameters = wordSelection()
-let difficulty = ''
-switch (parameters[1]) {
-  case 1:
-    difficulty = 'Facile'
-    break
-  case 1.2:
-    difficulty = 'Moyen'
-    break
-  case 1.5:
-    difficulty = 'Difficile'
-    break
-  default:
-    difficulty = 'Non identifiée'
-    break
-}
-let lang = parameters[2]
-
-//Debug Mode
-if (process.argv[2] === 'debug') {
-  console.log(parameters)
-}
-
-
-// Le jeu 
-let score
-if (process.argv.includes('gameV1')) {
-  score = gameV1(parameters[0])
 } else {
-  score = game(parameters[0])
-}
-score = score * parameters[1]
-console.log((chalk.bold.rgb(0, 200, 0)(`Ton score : ${score}/150`)))
-
-
-// Enregistrement du score dans un fichier
-if (!username) {
-  if (readline.keyInYN(console.log('Voulez-vous enregistrer votre score ?'))) {
-    while (!username) {
-      username = readline.question('Inscrivez votre nom : ')
-    }
-  } else {
-    console.log(chalk.bold('\nA la prochaine !\n'))
-    process.exit(1)
-  }
-}
-
-// Génération des données sur la partie
-let output = new UserData(username, score, difficulty, lang)
-
-
-// Fichier de sauvegarde
-if (!recordOn) {
-  scoreSheet = {
-    topFive: []
-  }
-  scoreSheet = JSON.stringify(scoreSheet)
-  fs.writeFileSync('./score.json', scoreSheet)
+  scoreSheet
+  fs.writeFileSync('./score.json', '{"topTwenty":[]}')
   scoreSheet = fs.readFileSync('./score.json', 'utf-8')
   scoreSheet = JSON.parse(scoreSheet)
 }
 
-// Ajout et mise à jour de la feuille de score
-let topFive = scoreSheet.topFive
-topFive = record.newScore(topFive, output)
-topFive = record.updateScore(topFive)
-scoreSheet.topFive = topFive
+// Affichage des scores (automatique)
+if (scoreSheet.topTwenty.length === 0) {
+  console.log(chalk.red('Il n\'y a pas encore de record.'))
+} else {
+  displayScore(scoreSheet.topTwenty)
+}
 
 
-// Conversion variable vers JSON
-let savedScoreSheet = JSON.stringify(scoreSheet)
+// Voir le calcul du score
+if (readline.keyInYN('Voulez-vous voir le barème du score ?')) {
+  console.log(chalk.bold(`
++---------------------------------------------+
+|                                             |
+|              Calcul des scores              |
+|                                             |
++---------------------------------------------+`))
+
+  console.log(`
+Nombre de lettres : 3  |   4  |   5   | 6 |   7  |  8   |  9+
+Multiplicateur --------|------|-------|---|------|------|---------
+Sans indice :      1.5 | 1.25 | 1.125 | 1 | 1.25 |  1.5 |  1.75  
+Avec indice :       1  |  1   |   1   | 1 | 1.125|  1.25|  1.5`)
+}
 
 
-// Ecriture du fichier
-fs.writeFileSync('./score.json', savedScoreSheet)
+// Avec quel joueur commencer la partie ?
+let oldPlayer = []
+for (let elem of scoreSheet.topTwenty) {
+  oldPlayer.push(`${elem.username} (${elem.score})`)
+}
+let username = ''
+let previousScore = 0
+let newPlayer = false
+
+if (scoreSheet.topTwenty.length === 0) {
+  // New Player
+  while (!username) {
+    username = readline.question('Inscrit ton nom : ')
+    newPlayer = true
+  }
+  username = username.toUpperCase()
+  // Choose player
+} else {
+  while (username === '' || username === -1) {
+    username = readline.keyInSelect([...oldPlayer, 'Nouveau joueur ?'], 'Quelle joueur es-tu ?')
+  }
+  if (username === oldPlayer.length) {
+    username = ''
+    // New Player
+    while (!username) {
+      username = readline.question('Inscrit ton nom : ')
+      newPlayer = true
+    }
+    username = username.toUpperCase()
+  } else {
+    previousScore = scoreSheet.topTwenty[username].score
+    username = oldPlayer[username].slice(0, oldPlayer[username].indexOf('('))
+  }
+}
+
+
+// Début du jeu
+let play = true
+let masterWord = ''
+let score = 0
+let difficulty = 0
+let lang = 0
+while (play) {
+  let thisIsTheGame = new HangMan(score, difficulty, lang, masterWord)
+  let data = thisIsTheGame.init()
+  difficulty = data[0]
+  lang = data[1]
+  masterWord = data[2]
+  score = thisIsTheGame.run()
+
+  // Comparaison du score
+  console.log(chalk.bold(`${username}`))
+  if (score > previousScore) {
+    if (previousScore === 0) {
+      console.log(chalk.green(`Tu peut être fière de ton score : ${score}`))
+    } else {
+      console.log(chalk.green(`Vous avez battu votre ancien score (${previousScore})`))
+    }
+    // Overlap de l'ancien score
+    if (!newPlayer) {
+      let place = 0
+      for (let elem of scoreSheet.topTwenty) {
+        if (elem.username === username.trim()) {
+          place = scoreSheet.topTwenty.indexOf(elem)
+        }
+      }
+      scoreSheet.topTwenty.splice(place, place + 1)
+    }
+    // Enregistrement du score
+    scoreSheet.topTwenty.push({ username: username, lang: lang, difficulty: difficulty, score: score, masterWord: masterWord })
+    updateScore(scoreSheet.topTwenty)
+  } else {
+    console.log(chalk.yellow(`Vous n'avez pas battu votre ancien score (${previousScore})`))
+    if (previousScore === 0) {
+      console.log(chalk.bold(`Oui là c'est pas beau...`))
+    }
+  }
+
+  // Votre classement
+  if (score !== 0) {
+    let place = 0
+    for (let elem of scoreSheet.topTwenty) {
+      if (elem.username === username) {
+        place = scoreSheet.topTwenty.indexOf(elem)
+      }
+    }
+    console.log(`Dans le classement, vous êtes ${place + 1}${place === 0 ? 'er' : 'ème'} !`)
+  }
+
+
+  // Rejouez une partie
+  play = readline.keyInYN('Voulez-vous rejouer ?')
+}
+// Sauvegarde
+fs.writeFileSync('./score.json', JSON.stringify(scoreSheet))

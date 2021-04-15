@@ -2,18 +2,19 @@
 const chalk = require('chalk')
 
 // Affichage du score
-const displayScore = (topFive) => {
+const displayScore = (topTwenty) => {
   // topFive est un tableau d'objet
   console.log(`
 +------------------+
-|       SCORE      |
+|      SCORES      |
 +------------------+
 
-TOP 5 :`)
-  for (let elem of topFive) {
-    console.log(chalk.bold(` - ${elem.username} : ${elem.score} (${elem.difficulty} en ${elem.lang})`))
+TOP 20 :`)
+  let color = 170
+  for (let elem of topTwenty) {
+    console.log(chalk.bold.hsl(color, 70, 40)(`${elem.username}: ${elem.score} (${elem.masterWord})`))
+    color = (color - 10) % 360
   }
-  console.log('\n\n')
 }
 
 // Mise à jour du score (dans l'ordre)

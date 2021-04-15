@@ -1,5 +1,9 @@
 # Bienvenue dans le jeu du pendu  
-Pour utiliser le programme : `node main.js`  
+Pour utiliser le programme : 
+- `git clone`
+- `yarn`
+- `node main.js`  
+
 *Puis c'est partie !*
 
 **Fonctionnalités :** 
@@ -18,5 +22,5 @@ Pour utiliser le programme : `node main.js`
 
 -----------
 **Attention** : 
-- certain mots (notamment en français) contiennent des espaces. 
-- le programme est strict sur les accents (``é !== e``)
+- certains mots (notamment en français) contiennent des espaces. 
+- le programme est strict sur les accents (`é !== e` par exemple)
